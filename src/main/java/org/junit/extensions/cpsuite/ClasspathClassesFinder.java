@@ -5,14 +5,17 @@
  */
 package org.junit.extensions.cpsuite;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utility class to find classes within the class path, both inside and outside
  * of jar files. Inner and anonymous classes are not being considered in the
  * first place.
- * 
+ * <p>
  * It's originally evolved out of ClassPathTestCollector in JUnit 3.8.1
  */
 public class ClasspathClassesFinder implements ClassesFinder {
@@ -54,17 +57,24 @@ public class ClasspathClassesFinder implements ClassesFinder {
 
 	private void gatherClassesInRoot(File classRoot, List<Class<?>> classes) {
 		Iterable<String> relativeFilenames = new NullIterator<String>();
-		if (tester.searchInJars() && isJarFile(classRoot)) {
+		if (tester.parseManifest() && isClasspathJarFile(classRoot)) {
+			relativeFilenames = new ManifestFilenameIterator(classRoot, tester.searchInJars());
+		} else if (tester.searchInJars() && isJarFile(classRoot)) {
 			try {
 				relativeFilenames = new JarFilenameIterator(classRoot);
 			} catch (IOException e) {
-				// Don't iterate unavailable ja files
+				// Don't iterate unavailable jar files
 				e.printStackTrace();
 			}
+
 		} else if (classRoot.isDirectory()) {
 			relativeFilenames = new RecursiveFilenameIterator(classRoot);
 		}
 		gatherClasses(classes, relativeFilenames);
+	}
+
+	private boolean isClasspathJarFile(File classRoot) {
+		return classRoot.getName().equals("classpath.jar");
 	}
 
 	private boolean isJarFile(File classRoot) {

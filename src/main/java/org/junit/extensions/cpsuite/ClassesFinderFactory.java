@@ -6,6 +6,6 @@
 package org.junit.extensions.cpsuite;
 
 public interface ClassesFinderFactory {
-	ClassesFinder create(boolean searchInJars, String[] filterPatterns, SuiteType[] suiteTypes, Class<?>[] baseTypes,
-			Class<?>[] excludedBaseTypes, String classpathProperty);
+	ClassesFinder create(boolean searchInJars, boolean parseManifest, String[] filterPatterns, SuiteType[] suiteTypes,
+						 Class<?>[] baseTypes, Class<?>[] excludedBaseTypes, String classpathProperty);
 }

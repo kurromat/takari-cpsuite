@@ -6,7 +6,10 @@
 package org.junit.extensions.cpsuite;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * This class provides an iterator over all file names in a directory and its
@@ -29,7 +32,7 @@ public class RecursiveFilenameIterator implements Iterator<String>, Iterable<Str
 		this(root, root.getAbsolutePath().length() + 1);
 	}
 
-	private RecursiveFilenameIterator(File root, int prefixLength) {
+	public RecursiveFilenameIterator(File root, int prefixLength) {
 		this.root = root;
 		this.prefixLength = prefixLength;
 		if (!isRootFile()) {

@@ -7,9 +7,9 @@ package org.junit.extensions.cpsuite;
 
 public class ClasspathFinderFactory implements ClassesFinderFactory {
 
-	public ClassesFinder create(boolean searchInJars, String[] filterPatterns, SuiteType[] suiteTypes, Class<?>[] baseTypes,
-			Class<?>[] excludedBaseTypes, String classpathProperty) {
-		ClassTester tester = new ClasspathSuiteTester(searchInJars, filterPatterns, suiteTypes, baseTypes, excludedBaseTypes);
+	public ClassesFinder create(boolean searchInJars, boolean parseManifest, String[] filterPatterns, SuiteType[] suiteTypes, Class<?>[] baseTypes,
+								Class<?>[] excludedBaseTypes, String classpathProperty) {
+		ClassTester tester = new ClasspathSuiteTester(searchInJars, parseManifest, filterPatterns, suiteTypes, baseTypes, excludedBaseTypes);
 		return new ClasspathClassesFinder(tester, classpathProperty);
 	}
 

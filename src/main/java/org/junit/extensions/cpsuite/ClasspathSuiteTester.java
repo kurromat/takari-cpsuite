@@ -5,43 +5,43 @@
  */
 package org.junit.extensions.cpsuite;
 
-import java.lang.reflect.*;
-import java.util.*;
-
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * ClassTester implementation to retrieve JUnit38 & 4.x test classes in the
  * classpath. You can specify if you want to include jar files in the search and
  * you can give a set of regex expression to specify the class names to include.
- * 
  */
 public class ClasspathSuiteTester implements ClassTester {
 
 	private final boolean searchInJars;
 	private final SuiteType[] suiteTypes;
-	private List<JavaStyleClassnameMatcher> positiveFilters;
-	private List<JavaStyleClassnameMatcher> negationFilters;
 	private final Class<?>[] baseTypes;
 	private final Class<?>[] excludedBaseTypes;
+	private boolean parseManifest;
+	private List<JavaStyleClassnameMatcher> positiveFilters;
+	private List<JavaStyleClassnameMatcher> negationFilters;
 
 	/**
-	 * @param searchInJars
-	 *            Specify if you want to include jar files in the search
-	 * @param filterPatterns
-	 *            A set of regex expression to specify the class names to
-	 *            include (included if any pattern matches); use null to include
-	 *            all test classes in all packages.
+	 * @param searchInJars   Specify if you want to include jar files in the search
+	 * @param parseManifest
+	 * @param filterPatterns A set of regex expression to specify the class names to
+	 *                       include (included if any pattern matches); use null to include
+	 *                       all test classes in all packages.
 	 * @param baseTypes
-	 *            TODO
-	 * @param types
 	 */
-	public ClasspathSuiteTester(boolean searchInJars, String[] filterPatterns, SuiteType[] suiteTypes, Class<?>[] baseTypes,
-			Class<?>[] excludedBaseTypes) {
+	public ClasspathSuiteTester(boolean searchInJars, boolean parseManifest, String[] filterPatterns, SuiteType[] suiteTypes, Class<?>[] baseTypes,
+								Class<?>[] excludedBaseTypes) {
 		this.searchInJars = searchInJars;
+		this.parseManifest = parseManifest;
 		this.positiveFilters = findPositiveFilters(filterPatterns);
 		this.negationFilters = findNegationFilters(filterPatterns);
 		this.suiteTypes = suiteTypes;
@@ -209,5 +209,9 @@ public class ClasspathSuiteTester implements ClassTester {
 
 	public Class<?>[] getExcludedBaseTypes() {
 		return excludedBaseTypes;
+	}
+
+	public boolean parseManifest() {
+		return parseManifest;
 	}
 }
