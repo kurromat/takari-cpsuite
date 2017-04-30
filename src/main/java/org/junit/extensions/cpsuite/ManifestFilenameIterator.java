@@ -11,39 +11,33 @@ import java.util.NoSuchElementException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-public class ManifestFilenameIterator implements Iterator<String>, Iterable<String> {
+public class ManifestFilenameIterator extends FilenameIterator {
 
 
-	private List<Iterator<String>> iterators;
+	private List<FilenameIterator> iterators;
 	private int index = 0;
+	private IteratorCreator iteratorCreator;
 
-	ManifestFilenameIterator(File file, boolean searchInJars) {
+	ManifestFilenameIterator(File file, IteratorCreator iteratorCreator) {
+		this.iteratorCreator = iteratorCreator;
 		iterators = new ArrayList<>();
-		parseClasspathJar(file, searchInJars);
+		parseClasspathJar(file);
 
 	}
 
-	private void parseClasspathJar(File file, boolean searchInJars) {
+	private void parseClasspathJar(File file) {
 		try {
 			Attributes mainAttributes = new JarFile(file).getManifest().getMainAttributes();
 			if (mainAttributes.containsKey(Attributes.Name.CLASS_PATH)) {
 				String[] classPathParts = mainAttributes.getValue(Attributes.Name.CLASS_PATH).split(" ");
 				List<File> files = convertToFiles(classPathParts);
 				for (File fileInClassPath : files) {
-					if (searchInJars && isJarFile(fileInClassPath)) {
-						iterators.add(new JarFilenameIterator(fileInClassPath));
-					} else if (fileInClassPath.isDirectory()) {
-						iterators.add(new RecursiveFilenameIterator(fileInClassPath));
-					}
+					iterators.add(iteratorCreator.createFor(fileInClassPath));
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private boolean isJarFile(File fileInClassPath) {
-		return fileInClassPath.getName().endsWith(".jar") || fileInClassPath.getName().endsWith(".JAR");
 	}
 
 	private List<File> convertToFiles(String[] classPathParts) {

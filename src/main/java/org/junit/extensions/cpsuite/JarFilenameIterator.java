@@ -5,15 +5,19 @@
  */
 package org.junit.extensions.cpsuite;
 
-import java.io.*;
-import java.util.*;
-import java.util.jar.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * This class provides an iterator over all file names in a jar file.
  * Directories are not considered to be files.
  */
-public class JarFilenameIterator implements Iterator<String>, Iterable<String> {
+public class JarFilenameIterator extends FilenameIterator {
 
 	private Enumeration<JarEntry> entries;
 

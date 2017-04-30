@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.contains;
 
 public class ManifestFilenameIteratorTest {
 
+	public static final IteratorCreator NON_SEARCHING_ITERATOR_CREATOR = new IteratorCreator(false, false);
+	public static final IteratorCreator JAR_SEARCHING_ITERATOR_CREATOR = new IteratorCreator(true, false);
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -42,7 +44,7 @@ public class ManifestFilenameIteratorTest {
 		createDummyFiles(asList("dummy.class", "temp.class"));
 		File classpathJar = createClasspathJar(temporaryFolder.getRoot().toURI().toString());
 
-		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, false);
+		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, NON_SEARCHING_ITERATOR_CREATOR);
 
 		assertThat(iterator, contains("dummy.class", "temp.class"));
 	}
@@ -54,7 +56,7 @@ public class ManifestFilenameIteratorTest {
 		String classPath = temporaryFolder.getRoot().toURI().toString() + " " + jarWithClasses.toURI();
 		File classpathJar = createClasspathJar(classPath);
 
-		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, false);
+		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, NON_SEARCHING_ITERATOR_CREATOR);
 		assertThat(iterator, contains("dummy.class", "temp.class"));
 	}
 
@@ -65,7 +67,7 @@ public class ManifestFilenameIteratorTest {
 		String classPath = temporaryFolder.getRoot().toURI().toString() + " " + jarWithClasses.toURI();
 		File classpathJar = createClasspathJar(classPath);
 
-		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, true);
+		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, JAR_SEARCHING_ITERATOR_CREATOR);
 
 		assertThat(iterator, contains("dummy.class", "temp.class", "org/classInJar1.class", "org/classInJar2.class"));
 	}
@@ -73,14 +75,14 @@ public class ManifestFilenameIteratorTest {
 	@Test
 	public void handlesEmptyClasspathInJar() throws Exception {
 		File classpathJar = createClasspathJar("");
-		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, false);
+		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, NON_SEARCHING_ITERATOR_CREATOR);
 		assertThat(iterator, is(Matchers.<String>emptyIterable()));
 	}
 
 	@Test
 	public void handlesMissingClasspathInJar() throws Exception {
 		File classpathJar = createClasspathJar(null);
-		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, false);
+		ManifestFilenameIterator iterator = new ManifestFilenameIterator(classpathJar, NON_SEARCHING_ITERATOR_CREATOR);
 		assertThat(iterator, is(Matchers.<String>emptyIterable()));
 	}
 

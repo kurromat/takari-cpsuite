@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
  * subdirectories. The filenames are given relative to the root. Directories are
  * not considered to be files.
  */
-public class RecursiveFilenameIterator implements Iterator<String>, Iterable<String> {
+public class RecursiveFilenameIterator extends FilenameIterator {
 
 	private List<RecursiveFilenameIterator> innerIterators;
 
